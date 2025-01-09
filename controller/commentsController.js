@@ -6,22 +6,25 @@ const { validationResult } = require("express-validator");
 exports.createComment = async (req, res, next) => {
   try {
     //create a new comment in the database
-    const { email, content } = req.body;
+    const { email, message } = req.body;
     //validate the request
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-    const createdComment = await prisma.comments.create({
+    const createdComment = await prisma.comment.create({
       data: {
         email,
-        content,
+        message
       },
     });
     //respond with the created comment in the db
-    res.status(201).json(comment);
+    res.status(201).json({
+      message: "Comment created successfully✅",
+      createdComment
+    });
   } catch (error) {
-    console.error("Error creating comment: ", next(error));
+    next(error);
   }
 };
 

@@ -16,48 +16,59 @@ datasource db {
 //models
 
 model Post {
-  id        String   @id @default(cuid())
-  images    String   @default("image.png")
+  id        String    @id @default(uuid())
+  images    String?   @default("image.png")
   title     String
-  content   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  userId    String
-  user      User    @relation(fields: [userId], references: [id])
+  body      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  comments  Comment[]
 
   @@map("posts")
 }
 
 model User {
-  id        String   @id @default(cuid())
-  name      String
-  email     String  @unique
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  posts     Post[]
-  profile   Profile?
+  id       String    @id @default(uuid())
+  name     String
+  email    String    @unique
+  comments Comment[]
+  likes    Like[]
+  Profile  Profile?
 
   @@map("users")
 }
 
 model Comment {
-  id        String   @id @default(cuid())
-  email     String  @unique
-  content   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        String    @id @default(uuid())
+  message   String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  post      Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    String
+  parent    Comment?  @relation("parentChild", fields: [parentId], references: [id], onDelete: Cascade)
+  children  Comment[] @relation("parentChild")
+  parentId  String?
+  likes     Like[]
 
   @@map("comments")
 }
 
+model Like {
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  userId    String
+  commentId String
+
+  @@id([userId, commentId])
+}
+
 model Profile {
-  id        String   @id @default(cuid())
-  bio       String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  userId    String  @unique
-  user      User    @relation(fields: [userId], references: [id])
+  id     String  @id @default(cuid())
+  bio    String?
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String  @unique
 
   @@map("profiles")
 }
