@@ -1,6 +1,6 @@
 const express = require('express');
 const error = require('./middleware/error');
-const router = require('./routes/router');
+const commentsRouter = require('./routes/commentsRouter');
 const cors = require('cors');
 
 const app = express();
@@ -8,7 +8,7 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(cors());
-app.use('/api/comments', router);
+app.use('/api/comments', commentsRouter);
 
 // Routes
 app.get('/', (req, res) => {

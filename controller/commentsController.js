@@ -2,7 +2,7 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const { validationResult } = require("express-validator");
 
-//create comment
+//create comment------------WORKING AS INTENDED
 exports.createComment = async (req, res, next) => {
   try {
     //create a new comment in the database
@@ -15,23 +15,23 @@ exports.createComment = async (req, res, next) => {
     const createdComment = await prisma.comment.create({
       data: {
         email,
-        message
+        message,
       },
     });
     //respond with the created comment in the db
     res.status(201).json({
-      message: "Comment created successfully✅",
-      createdComment
+      message: "Comment created successfully",
+      createdComment,
     });
   } catch (error) {
     next(error);
   }
 };
 
-//get all comments
+//get all comments-----------WORKIG AS INTENDED
 exports.getComments = async (req, res, next) => {
   try {
-    const comments = await prisma.comments.findMany();
+    const comments = await prisma.comment.findMany();
 
     res.json(comments);
   } catch (error) {
@@ -39,52 +39,64 @@ exports.getComments = async (req, res, next) => {
   }
 };
 
-//get single comment by id              //PENDING=======================
+//get single comment by id-------------WORKING AS INTENDED
 exports.getComment = async (req, res, next) => {
   try {
-    const comment = await Comment.findById(req.params.id);
+    const id = req.params.id;
+    const comment = await prisma.comment.findUnique({
+      where: {
+        id,
+      },
+    });
     if (!comment) {
-      return res.status(404).send();
+      return res.status(404).json({
+        message: "Comment not found, please provide a valid id",
+      });
     }
-    res.status(200).send(comment);
+    res.status(200).json({
+      message: "Comment found",
+      comment,
+    });
   } catch (error) {
     next(error);
   }
 };
 
-//update comment
+//update comment-------------WORKING AS INTENDED
 exports.updateComment = async (req, res, next) => {
   try {
-    const commentId = parseInt(req.params.id);
-    const comments = await prisma.comments.findUnique({
+    const commentId = req.params.id
+    const comments = await prisma.comment.findUnique({
       where: {
         id: commentId,
       },
     });
     if (!comments) {
-      return res.status(404).json({ error: "Comment not found ❌" });
+      return res.status(404).json({
+        error: "comment not found, please provide a valid id"
+      });
     }
-    const { email, comment } = req.body;
-    const updatedComment = await prisma.comments.update({
+    const { email, message } = req.body;
+    const updatedComment = await prisma.comment.update({
       where: {
         id: commentId,
       },
       data: {
         email,
-        comment,
-      },
+        message
+      }
     });
-    res.json(updatedComment);
+    res.status(201).json(updatedComment);
   } catch (error) {
     next(error);
   }
 };
 
-//delete comment
-exports.deleteComment = async (req, res) => {
+//delete comment-------------WORKING AS INTENDED
+exports.deleteComment = async (req, res, next) => {
   try {
-    const commentId = parseInt(req.params.id);
-    const comments = await prisma.comments.findUnique({
+    const commentId = req.params.id
+    const comments = await prisma.comment.findUnique({
       where: {
         id: commentId,
       },
@@ -92,16 +104,19 @@ exports.deleteComment = async (req, res) => {
     if (!comments) {
       return res
         .status(404)
-        .json({ error: "that which cant be found cant be deleted😞" });
+        .json({ error: "the comment could not be found" });
     }
-    await prisma.comments.delete({
+    await prisma.comment.delete({
       where: {
         id: commentId,
       },
     });
 
-    res.json({ message: "Comment deleted successfully ✅" });
+    res.json({ message: "Comment deleted successfully" });
   } catch (error) {
-    res.status(500).send(error);
+    next(error)
   }
 };
+
+
+//---------EVERYTHING IS WORKING REMARKABLY, DON'T FUCKING TOUCH ANYTHING!!!---------😡....as a matter of fact, i am pushing this to the remote repo right now
