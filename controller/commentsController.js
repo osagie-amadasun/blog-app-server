@@ -32,7 +32,7 @@ exports.createComment = async (req, res, next) => {
 exports.getComments = async (req, res, next) => {
   try {
     const comments = await prisma.comment.findMany();
-
+    
     res.json(comments);
   } catch (error) {
     next(error);
