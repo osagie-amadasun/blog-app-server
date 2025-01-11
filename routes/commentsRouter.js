@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { check } = require("express-validator");
-const routerController = require("../controller/commentsController");
+const commentsController = require("../controller/commentsController");
 
 router.post(
   "/createComment",
@@ -12,11 +12,11 @@ router.post(
       .isEmail()
       .withMessage("please provide a valid email"),
   ],
-  routerController.createComment
+  commentsController.createComment
 );
-router.get("/getComments", routerController.getComments);
-router.get("/getComment/:id", routerController.getComment);
-router.put("/updateComment/:id", routerController.updateComment);
-router.delete("/deleteComment/:id", routerController.deleteComment);
+router.get("/getComments", commentsController.getComments);
+router.get("/getComment/:id", commentsController.getComment);
+router.put("/updateComment/:id", commentsController.updateComment);
+router.delete("/deleteComment/:id", commentsController.deleteComment);
 
 module.exports = router;
