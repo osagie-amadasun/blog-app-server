@@ -2,6 +2,7 @@ const express = require('express');
 const error = require('./middleware/error');
 const commentsRouter = require('./routes/commentsRouter');
 const usersRouter = require('./routes/usersRouter');
+const postsRouter = require('./routes/postsRouter');
 const cors = require('cors');
 
 const app = express();
@@ -12,6 +13,7 @@ app.use(cors());
 
 app.use('/api/comments', commentsRouter);
 app.use('/api/users', usersRouter);
+app.use('/api/posts', postsRouter);
 
 
 

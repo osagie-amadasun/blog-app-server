@@ -1,11 +1,17 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
+const { validationResult } = require("express-validator");
 
 //create user----------------WORKING AS INTENDED
 exports.createUser = async (req, res, next) => {
   try {
     //create a new user in the db
     const { name, email } = req.body;
+    //validate the request
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
     const createdUser = await prisma.user.create({
       data: {
         name,
@@ -90,7 +96,7 @@ exports.updateUser = async (req, res, next) => {
   }
 };
 
-//delete user---------------
+//delete user---------------WORKING AS INTENDED
 exports.deleteUser = async (req, res, next) => {
   try {
     //get the id of the user from the params

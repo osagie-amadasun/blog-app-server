@@ -17,7 +17,7 @@ datasource db {
 
 model Post {
   id        String   @id @default(uuid())
-  images    String?  @default("image.png")
+  image    String?  @default("image.png")
   title     String
   body      String
   createdAt DateTime @default(now())
