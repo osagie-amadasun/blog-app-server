@@ -1,6 +1,11 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const { validationResult } = require("express-validator");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const { hashSync, compareSync } = require("bcryptjs");
+
+//---------------CRUD OPERATION LOGIC FOR USER--------------------
 
 //create user----------------WORKING AS INTENDED
 exports.createUser = async (req, res, next) => {
@@ -27,6 +32,9 @@ exports.createUser = async (req, res, next) => {
     next(error);
   }
 };
+
+//create and return the logged in user----------
+exports.loggedIn = async (req, res, next) => {};
 
 //get all users---------------WORKING AS INTENDED
 exports.getAllUsers = async (req, res, next) => {
@@ -112,6 +120,66 @@ exports.deleteUser = async (req, res, next) => {
       message: "User deleted successfully",
       user: deletedUser,
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+//-----------------AUTHENTICATION LOGIC---------------------
+
+//SignUp new user-----------------WORKING AS INTENDED
+exports.signUp = async (req, res, next) => {
+  try {
+    const { email, password, name } = req.body;
+    //check if the user exists
+    let user = await prisma.user.findFirst({
+      where: {
+        email: email,
+      },
+    });
+    if (user) {
+      return res.status(400).json({ message: "User already exists" });
+    }
+    //create a new user if user does not exist
+    newUser = await prisma.user.create({
+      data: {
+        name,
+        email,
+        password: hashSync(password, 10),
+      },
+    });
+    //send backa response
+    res.status(200).json(newUser);
+  } catch (error) {
+    next(error);
+  }
+};
+
+//Login existing user--------------------
+exports.logIn = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    //check if the user exists
+    let user = await prisma.user.findFirst({
+      where: {
+        email: email,
+      },
+    });
+    if (!user) {
+      return res.status(400).json({ message: "User does not exist" });
+    }
+    //check if the password is correct
+    if (!compareSync(password, user.password)) {
+      return res.status(400).json({ message: "Incorrect password" });
+    }
+    //generate token
+    const token = jwt.sign(
+      {userId: user.id},
+      process.env.SECRET_KEY,
+      { JWT_SECRET }
+    );
+
+    res.json({ user, token });
   } catch (error) {
     next(error);
   }

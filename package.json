@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "build": "netlify deploy --prod"
   },
   "keywords": [],
   "author": "",
@@ -11,10 +12,15 @@
   "description": "",
   "dependencies": {
     "@prisma/client": "^6.1.0",
+    "bcryptjs": "^2.4.3",
     "blog_app-backend": "file:",
     "cors": "^2.8.5",
     "express": "^4.21.2",
-    "express-validator": "^7.2.1"
+    "express-validator": "^7.2.1",
+    "jsonwebtoken": "^9.0.2",
+    "netlify-cli": "^18.0.0",
+    "netlify-lambda": "^0.4.0",
+    "serverless-http": "^3.2.0"
   },
   "devDependencies": {
     "prisma": "^6.2.1"

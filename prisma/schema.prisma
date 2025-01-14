@@ -19,7 +19,8 @@ model Post {
   id        String   @id @default(uuid())
   image    String?  @default("image.png")
   title     String
-  body      String
+  content   String   
+  author    String?   
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   // comments  Comment[]
@@ -31,6 +32,9 @@ model User {
   id    String @id @default(uuid())
   name  String
   email String @unique
+  password String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   // comments Comment[]
 
   @@map("users")

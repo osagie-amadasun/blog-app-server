@@ -4,12 +4,12 @@ const prisma = new PrismaClient();
 //create posts-------------WORKING AS INTENDED
 exports.createPost = async (req, res, next) => {
   try {
-    const { image, title, body } = req.body;
+    const { image, title, content } = req.body;
     const post = await prisma.post.create({
       data: {
         image,
         title,
-        body,
+        content,
       },
     });
     res.status(201).json({
