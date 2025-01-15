@@ -1,7 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const { validationResult } = require("express-validator");
-const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { hashSync, compareSync } = require("bcryptjs");
 
@@ -122,12 +121,15 @@ exports.deleteUser = async (req, res, next) => {
   }
 };
 
-
-
 //-----------------AUTHENTICATION LOGIC---------------------
 
 //SignUp new user-----------------WORKING AS INTENDED
 exports.signUp = async (req, res, next) => {
+  //validation logic
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
   try {
     const { email, password, name } = req.body;
     //check if the user exists
@@ -147,14 +149,14 @@ exports.signUp = async (req, res, next) => {
         password: hashSync(password, 10),
       },
     });
-    //send backa response
+    //send back a response
     res.status(200).json(newUser);
   } catch (error) {
     next(error);
   }
 };
 
-//Login existing user--------------------
+//Login existing user--------------------WORKING AS INTENDED
 exports.logIn = async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -172,13 +174,15 @@ exports.logIn = async (req, res, next) => {
       return res.status(400).json({ message: "Incorrect password" });
     }
     //generate token
-    const token = jwt.sign(
-      {userId: user.id},
-      process.env.JWT_SECRET
-    );
+    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET);
 
     res.json({ user, token });
   } catch (error) {
     next(error);
   }
 };
+
+//create a me api--------------------
+exports.me = async (req, res) => {
+  res.json(req.user);
+}
