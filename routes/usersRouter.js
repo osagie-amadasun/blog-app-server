@@ -14,11 +14,11 @@ router.post(
   ],
   usersController.createUser
 );
+router.post("/signup", usersController.signUp);
+router.post("/login", usersController.logIn);
 router.get("/getUsers", usersController.getAllUsers);
 router.get("/getUser/:id", usersController.getSingleUser);
 router.put("/updateUser/:id", usersController.updateUser);
 router.delete("/deleteUser/:id", usersController.deleteUser);
-router.post("/signup", usersController.signUp);
-router.post("/login", usersController.logIn);
 
 module.exports = router;

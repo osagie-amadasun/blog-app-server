@@ -4,6 +4,8 @@ const commentsRouter = require('./routes/commentsRouter');
 const usersRouter = require('./routes/usersRouter');
 const postsRouter = require('./routes/postsRouter');
 const cors = require('cors');
+require('dotenv').config();
+
 
 const app = express();
 

@@ -33,9 +33,6 @@ exports.createUser = async (req, res, next) => {
   }
 };
 
-//create and return the logged in user----------
-exports.loggedIn = async (req, res, next) => {};
-
 //get all users---------------WORKING AS INTENDED
 exports.getAllUsers = async (req, res, next) => {
   try {
@@ -125,6 +122,8 @@ exports.deleteUser = async (req, res, next) => {
   }
 };
 
+
+
 //-----------------AUTHENTICATION LOGIC---------------------
 
 //SignUp new user-----------------WORKING AS INTENDED
@@ -175,8 +174,7 @@ exports.logIn = async (req, res, next) => {
     //generate token
     const token = jwt.sign(
       {userId: user.id},
-      process.env.SECRET_KEY,
-      { JWT_SECRET }
+      process.env.JWT_SECRET
     );
 
     res.json({ user, token });
