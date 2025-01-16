@@ -131,11 +131,11 @@ exports.signUp = async (req, res, next) => {
     return res.status(400).json({ errors: errors.array() });
   }
   try {
-    const { email, password, name } = req.body;
+    const { name, email, password } = req.body;
     //check if the user exists
-    let user = await prisma.user.findFirst({
+    let user = await prisma.user.findUnique({
       where: {
-        email: email,
+        email: req.body.email,
       },
     });
     if (user) {

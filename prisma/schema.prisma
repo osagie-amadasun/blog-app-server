@@ -24,7 +24,6 @@ model Post {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   comments  Comment[]
-  images    Image[]
 
   @@map("posts")
 }
@@ -53,15 +52,4 @@ model Comment {
   postId    String
 
   @@map("comments")
-}
-
-model Image {
-  id        String   @id @default(uuid())
-  url       String   // Store the URL....not so sure i need this, but i'll keep it for now😅
-  altText   String?  // Optional alt text for accessibility
-  post      Post?    @relation(fields: [postId], references: [id])
-  postId    String?
-  createdAt DateTime @default(now())
-
-  @@map("images")
 }
