@@ -4,11 +4,12 @@ const prisma = new PrismaClient();
 //create posts-------------WORKING AS INTENDED
 exports.createPost = async (req, res, next) => {
   try {
-    const { image, title, content } = req.body;
+    const { title, author, image, content } = req.body;
     const post = await prisma.post.create({
       data: {
-        image,
         title,
+        author,
+        image,
         content,
       },
     });
@@ -58,13 +59,14 @@ exports.getPost = async (req, res, next) => {
 exports.updatePost = async (req, res, next) => {
   try {
     const postId = req.params.id;
-    const { image, title, body } = req.body;
+    const { title, author, image, content } = req.body;
     const post = await prisma.post.update({
       where: { id: postId },
       data: {
-        image,
         title,
-        body,
+        author,
+        image,
+        content,
       },
     });
     res.status(201).json({ message: "Post updated successfully", post: post });
@@ -73,7 +75,7 @@ exports.updatePost = async (req, res, next) => {
   }
 };
 
-//delete comment------------WORKING AS INTENDED
+//delete post------------WORKING AS INTENDED
 exports.deletePost = async (req, res, next) => {
   try {
     const postId = req.params.id;
@@ -95,3 +97,9 @@ exports.deletePost = async (req, res, next) => {
     next(error);
   }
 };
+
+
+//----------------handle image upload--------------------
+exports.uploadImage = (req, res, next) => {
+  res.json(req.file)
+}

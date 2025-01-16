@@ -22,10 +22,13 @@ exports.authMiddleware = async (req, res, next) => {
     //attach the user to the current req object
     req.user = user;
 
-    //-----------INTERESTING ERROR NOTE----------------
+    //-----------INTERESTING ERROR NOTE------------
     //so, i ran into an error here, and i later found out how to fix it...apparently, sometimes, you need to put add the "next()" function at the end of the middleware function, to make it move on to the next middleware function...if that makes sense. i didn't run into this issue throughout my application, but for some reason, this was the one middleware function that had to claim strong head.
     next();
   } catch (error) {
     next(error);
   }
 };
+
+
+//honestly....i don't even know what is going on in this middleware function, and if i was asked to explain it, i probably couldn't....but hey...it works, and that's what mattersヾ(≧▽≦*)o
