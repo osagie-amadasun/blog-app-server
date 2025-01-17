@@ -1,16 +1,21 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
+const sanitizeHtml = require('sanitize-html');
 
 //create posts-------------WORKING AS INTENDED
 exports.createPost = async (req, res, next) => {
   try {
     const { title, author, image, content } = req.body;
+
+    // sanitize user input
+    const sanitizedContent = sanitizeHtml(content);
+
     const post = await prisma.post.create({
       data: {
         title,
         author,
         image,
-        content,
+        content: sanitizedContent,
       },
     });
     res.status(201).json({
@@ -25,7 +30,9 @@ exports.createPost = async (req, res, next) => {
 //get all posts------------WORKINNG AS INTENDED
 exports.getPosts = async (req, res, next) => {
   try {
-    const posts = await prisma.post.findMany();
+    const posts = await prisma.post.findMany({
+      orderBy: { createdAt: "desc" },
+    });
     res.status(200).json({
       message: "Posts retrieved successfully",
       posts: posts,

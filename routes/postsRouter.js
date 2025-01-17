@@ -13,6 +13,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 const postsController = require("../controller/postsController");
 
+
 router.post("/createPost", postsController.createPost);
 //-----------under testing-----------
 router.post("/uploadFile", upload.single("image"), postsController.uploadImage);
