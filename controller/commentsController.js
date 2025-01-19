@@ -6,7 +6,7 @@ const { validationResult } = require("express-validator");
 exports.createComment = async (req, res, next) => {
   try {
     //create a new comment in the database
-    const { email, message } = req.body;
+    const { user, post, email, message } = req.body;
     //validate the request
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -14,8 +14,18 @@ exports.createComment = async (req, res, next) => {
     }
     const createdComment = await prisma.comment.create({
       data: {
+        user: {
+          connect: {
+            id: user,
+          },
+        },
         email,
         message,
+        post: {
+          connect: {
+            id: post,
+          },
+        },
       },
     });
     //respond with the created comment in the db
@@ -32,7 +42,7 @@ exports.createComment = async (req, res, next) => {
 exports.getComments = async (req, res, next) => {
   try {
     const comments = await prisma.comment.findMany();
-    
+
     res.json(comments);
   } catch (error) {
     next(error);
@@ -50,7 +60,7 @@ exports.getComment = async (req, res, next) => {
     });
     if (!comment) {
       return res.status(404).json({
-        message: "Comment not found, please provide a valid id",
+        message: "Comment not found",
       });
     }
     res.status(200).json({
@@ -65,7 +75,7 @@ exports.getComment = async (req, res, next) => {
 //update comment-------------WORKING AS INTENDED
 exports.updateComment = async (req, res, next) => {
   try {
-    const commentId = req.params.id
+    const commentId = req.params.id;
     const comments = await prisma.comment.findUnique({
       where: {
         id: commentId,
@@ -73,18 +83,18 @@ exports.updateComment = async (req, res, next) => {
     });
     if (!comments) {
       return res.status(404).json({
-        error: "comment not found, please provide a valid id"
+        error: "comment not found, please provide a valid id",
       });
     }
-    const { email, message } = req.body;
+    const { user, message } = req.body;
     const updatedComment = await prisma.comment.update({
       where: {
         id: commentId,
       },
       data: {
-        email,
-        message
-      }
+        user,
+        message,
+      },
     });
     res.status(201).json(updatedComment);
   } catch (error) {
@@ -95,16 +105,14 @@ exports.updateComment = async (req, res, next) => {
 //delete comment-------------WORKING AS INTENDED
 exports.deleteComment = async (req, res, next) => {
   try {
-    const commentId = req.params.id
+    const commentId = req.params.id;
     const comments = await prisma.comment.findUnique({
       where: {
         id: commentId,
       },
     });
     if (!comments) {
-      return res
-        .status(404)
-        .json({ error: "the comment could not be found" });
+      return res.status(404).json({ error: "the comment could not be found" });
     }
     await prisma.comment.delete({
       where: {
@@ -114,9 +122,8 @@ exports.deleteComment = async (req, res, next) => {
 
     res.json({ message: "Comment deleted successfully" });
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
-
 
 //---------EVERYTHING IS WORKING REMARKABLY, DON'T FUCKING TOUCH ANYTHING!!!---------😡....as a matter of fact, i am pushing this to the remote repo right now

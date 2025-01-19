@@ -1,6 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-const sanitizeHtml = require('sanitize-html');
+const sanitizeHtml = require("sanitize-html");
 
 //create posts-------------WORKING AS INTENDED
 exports.createPost = async (req, res, next) => {
@@ -49,6 +49,9 @@ exports.getPost = async (req, res, next) => {
     const post = await prisma.post.findUnique({
       where: {
         id: postId,
+      },
+      include: {
+        comments: true,
       },
     });
     if (!post) {
@@ -105,8 +108,7 @@ exports.deletePost = async (req, res, next) => {
   }
 };
 
-
 //----------------handle image upload--------------------
 exports.uploadImage = (req, res, next) => {
-  res.json(req.file)
-}
+  res.json(req.file);
+};
