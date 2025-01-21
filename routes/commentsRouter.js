@@ -4,7 +4,7 @@ const { check } = require("express-validator");
 const commentsController = require("../controller/commentsController");
 
 router.post(
-  "/createComment",
+  "/createComment/:postId",
   [
     check("email")
       .exists()
@@ -14,7 +14,7 @@ router.post(
   ],
   commentsController.createComment
 );
-router.get("/getComments", commentsController.getComments);
+router.get("/getComments/:postId", commentsController.getComments);
 router.get("/getComment/:id", commentsController.getComment);
 router.put("/updateComment/:id", commentsController.updateComment);
 router.delete("/deleteComment/:id", commentsController.deleteComment);

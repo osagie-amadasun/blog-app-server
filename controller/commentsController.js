@@ -39,13 +39,35 @@ exports.createComment = async (req, res, next) => {
 };
 
 //get all comments-----------WORKIG AS INTENDED
-exports.getComments = async (req, res, next) => {
+exports.getComments = async (req, res) => {
   try {
-    const comments = await prisma.comment.findMany();
+    const postId = req.params.postId;
+    if (!postId) {
+      return res.status(400).json({
+        error: "Please provide a postId query parameter",
+      });
+    }
+    const comments = await prisma.comment.findMany({
+      where: {
+        post: {
+          id: postId,
+        },
+      },
+      include: {
+        user: true,
+        post: true,
+      },
+      orderBy: {
+        createdAt: "asc",
+        },
+    });
 
-    res.json(comments);
+    res.status(200).json({
+      message: "Comments fetched successfully",
+      comments,
+    });
   } catch (error) {
-    next(error);
+    console.error("Error fetching comments: ", error);
   }
 };
 
