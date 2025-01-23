@@ -10,7 +10,7 @@ const { hashSync, compareSync } = require("bcryptjs");
 exports.createUser = async (req, res, next) => {
   try {
     //create a new user in the db
-    const { name, email } = req.body;
+    const { name, email, password } = req.body;
     //validate the request
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -20,6 +20,7 @@ exports.createUser = async (req, res, next) => {
       data: {
         name,
         email,
+        password: hashSync(password, 10)
       },
     });
     //return the created user
