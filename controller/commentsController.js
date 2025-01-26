@@ -110,28 +110,45 @@ exports.getComment = async (req, res, next) => {
 //update comment-------------WORKING AS INTENDED
 exports.updateComment = async (req, res, next) => {
   try {
-    const commentId = req.params.id;
-    const comments = await prisma.comment.findUnique({
+    const commentId = req.params.commentId;
+    const userId = req.user.id; // Get user ID from the token (authMiddleware)
+
+    // Find the comment by ID
+    const comment = await prisma.comment.findUnique({
       where: {
         id: commentId,
       },
     });
-    if (!comments) {
+
+    // Check if the comment exists
+    if (!comment) {
       return res.status(404).json({
-        error: "comment not found, please provide a valid id",
+        error: "Comment not found, please provide a valid ID",
       });
     }
-    const { user, message } = req.body;
+
+    // Check if the logged-in user is the owner of the comment
+    if (comment.userId !== userId) {
+      return res.status(403).json({
+        error: "You are not authorized to edit this comment",
+      });
+    }
+
+    // Update the comment
+    const { message } = req.body;
     const updatedComment = await prisma.comment.update({
       where: {
         id: commentId,
       },
       data: {
-        user,
         message,
       },
     });
-    res.status(201).json(updatedComment);
+
+    res.status(200).json({
+      message: "Comment updated successfully",
+      updatedComment,
+    });
   } catch (error) {
     next(error);
   }
