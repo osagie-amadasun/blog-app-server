@@ -5,8 +5,10 @@ const sanitizeHtml = require("sanitize-html");
 //create posts-------------WORKING AS INTENDED
 exports.createPost = async (req, res, next) => {
   try {
-    const { title, author, image, content } = req.body;
-
+    const { title, author, image, content, userId } = req.body;
+    if (!userId) {
+      return res.status(400).json({ error: "userId is required" });
+    }
     // sanitize user input
     const sanitizedContent = sanitizeHtml(content);
 
@@ -16,6 +18,11 @@ exports.createPost = async (req, res, next) => {
         author,
         image,
         content: sanitizedContent,
+        user: {
+          connect: {
+            id: userId,
+          },
+        }
       },
     });
     res.status(201).json({
@@ -32,6 +39,9 @@ exports.getPosts = async (req, res, next) => {
   try {
     const posts = await prisma.post.findMany({
       orderBy: { createdAt: "desc" },
+      include: {
+        user: true,
+      },
     });
     res.status(200).json({
       message: "Posts retrieved successfully",
@@ -51,6 +61,7 @@ exports.getPost = async (req, res, next) => {
         id: postId,
       },
       include: {
+        user: true,
         comments: true,
       },
     });

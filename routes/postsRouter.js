@@ -14,7 +14,7 @@ const upload = multer({ storage });
 const postsController = require("../controller/postsController");
 
 
-router.post("/createPost", postsController.createPost);
+router.post("/createPost/:userId", postsController.createPost);
 //-----------under testing-----------
 router.post("/uploadFile", upload.single("image"), postsController.uploadImage);
 //-----------------------------------
