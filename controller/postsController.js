@@ -18,11 +18,12 @@ exports.createPost = async (req, res, next) => {
         author,
         image,
         content: sanitizedContent,
-        userId: {
-          connect: {
-            id: userId,
-          },
-        }
+        userId,
+        // user: {
+        //   connect: {
+        //     id: userId,
+        //   },
+        // }
       },
     });
     res.status(201).json({
