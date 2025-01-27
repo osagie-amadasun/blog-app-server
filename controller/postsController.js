@@ -5,7 +5,7 @@ const sanitizeHtml = require("sanitize-html");
 //create posts-------------WORKING AS INTENDED
 exports.createPost = async (req, res, next) => {
   try {
-    const { title, author, image, content, userId } = req.body;
+    const { title, author, image, content, user, userId } = req.body;
     if (!userId) {
       return res.status(400).json({ error: "userId is required" });
     }
