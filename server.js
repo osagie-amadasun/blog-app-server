@@ -45,5 +45,5 @@ app.use(error);
 const port = 5000;
 // Start server
 app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+  console.log(`Server is running on https://blog-app-server-0i1w.onrender.com:${port}`);
 });
