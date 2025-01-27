@@ -18,7 +18,7 @@ exports.createPost = async (req, res, next) => {
         author,
         image,
         content: sanitizedContent,
-        user: {
+        userId: {
           connect: {
             id: userId,
           },
