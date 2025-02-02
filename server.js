@@ -6,14 +6,20 @@ const postsRouter = require("./routes/postsRouter");
 const cors = require("cors");
 require("dotenv").config();
 const path = require("path");
-
 const app = express();
+
+let frontPort = 5173;
+// Start server
+let frontend_URL = `https://localhost:${frontPort}`
+if (process.env.NODE_ENV === "production") {
+  frontend_URL = `https://amadasunslittleblog.netlify.app/`
+}
 
 // Middleware
 app.use(express.json());
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: frontend_URL,
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
@@ -44,6 +50,11 @@ app.use(error);
 
 const port = 5000;
 // Start server
+let URL = `https://localhost:${port}`
+if (process.env.NODE_ENV === "production") {
+  URL = `https://blog-app-server-0i1w.onrender.com:${port}`
+}
+
 app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+  console.log(`Server is running on ${URL}`);
 });
