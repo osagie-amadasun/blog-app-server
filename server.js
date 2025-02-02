@@ -13,7 +13,7 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: "https://amadasunslittleblog.netlify.app",
+    origin: "http://localhost:5173",
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
@@ -45,5 +45,5 @@ app.use(error);
 const port = 5000;
 // Start server
 app.listen(port, () => {
-  console.log(`Server is running on https://blog-app-server-0i1w.onrender.com:${port}`);
+  console.log(`Server is running on http://localhost:${port}`);
 });
