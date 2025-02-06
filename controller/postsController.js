@@ -22,7 +22,7 @@ exports.createPost = async (req, res, next) => {
           connect: {
             id: userId,
           },
-        }
+        },
       },
     });
     res.status(201).json({
@@ -80,17 +80,34 @@ exports.getPost = async (req, res, next) => {
 exports.updatePost = async (req, res, next) => {
   try {
     const postId = req.params.id;
-    const { title, author, image, content } = req.body;
-    const post = await prisma.post.update({
-      where: { id: postId },
+    const { title, author, image, content, userId } = req.body;
+    const post = await prisma.post.findUnique({
+      where: {
+        id: postId,
+      },
+    });
+    if (!post) {
+      return res.status(404).json({ message: "Post does not exist" });
+    }
+    // sanitize user input
+    const sanitizedContent = sanitizeHtml(content);
+    const updatedPost = await prisma.post.update({
+      where: {
+        id: postId,
+      },
       data: {
         title,
         author,
         image,
-        content,
+        content: sanitizedContent,
+        user: {
+          connect: {
+            id: userId,
+          },
+        },
       },
     });
-    res.status(201).json({ message: "Post updated successfully", post: post });
+    res.status(201).json({ message: "Post updated successfully", post: updatedPost });
   } catch (error) {
     next(error);
   }
@@ -100,6 +117,7 @@ exports.updatePost = async (req, res, next) => {
 exports.deletePost = async (req, res, next) => {
   try {
     const postId = req.params.id;
+    const userId = req.query.userId; // Extract userId from query params //userId is required to delete post and should be passed from frontend
     const post = await prisma.post.findUnique({
       where: {
         id: postId,
@@ -108,6 +126,10 @@ exports.deletePost = async (req, res, next) => {
     if (!post) {
       return res.status(404).json({ message: "Post could not be found" });
     }
+    if (post.userId !== userId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    // delete post
     await prisma.post.delete({
       where: {
         id: postId,
