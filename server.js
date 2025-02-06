@@ -8,21 +8,20 @@ require("dotenv").config();
 const path = require("path");
 const app = express();
 
-let frontPort = 5173;
-// Start server
-let frontend_URL = `https://localhost:${frontPort}`
-if (process.env.NODE_ENV === "production") {
+let frontend_URL;
+if (process.env.NODE_ENV === "development") {
+  frontend_URL = `http://localhost:5173`
+  console.log("Running in development mode");
+} else {
   frontend_URL = `https://amadasunslittleblog.netlify.app/`
   console.log("Running in production mode");
-} else {
-  console.log("Running in development mode");
 }
 
 // Middleware
 app.use(express.json());
 app.use(
   cors({
-    origin: `http://localhost:5173`,
+    origin: frontend_URL,
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
@@ -53,8 +52,10 @@ app.use(error);
 
 const port = 5000;
 // Start server
-let URL = `https://localhost:${port}`
-if (process.env.NODE_ENV === "production") {
+let URL
+if (process.env.NODE_ENV === "development") {
+  URL = `http://localhost:${port}`
+} else {
   URL = `https://blog-app-server-0i1w.onrender.com:${port}`
 }
 
