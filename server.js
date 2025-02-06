@@ -13,7 +13,7 @@ if (process.env.NODE_ENV === "development") {
   frontend_URL = `http://localhost:5173`
   console.log("Running in development mode");
 } else {
-  frontend_URL = `https://amadasunslittleblog.netlify.app/`
+  frontend_URL = `https://amadasunslittleblog.netlify.app`
   console.log("Running in production mode");
 }
 
